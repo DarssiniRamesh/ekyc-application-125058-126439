@@ -1,1 +1,3 @@
-# ekyc-application-125058-126439
+# Project Repository
+
+This is the initial README file for the project.
