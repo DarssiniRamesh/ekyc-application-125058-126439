@@ -1,25 +1,59 @@
 require('dotenv').config();
-const { run, DB_PATH } = require('./index');
+const fs = require('fs');
+const path = require('path');
+const { db, DB_PATH } = require('./index');
 
+/**
+ * Reads all .sql files from the migrations directory and runs them sequentially.
+ * This is a lightweight migration runner suitable for SQLite and simple projects.
+ */
 async function migrate() {
-  // Create users table with required columns
-  const sql = `
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE,
-    mobile TEXT UNIQUE,
-    password_hash TEXT,
-    otp_code TEXT,
-    otp_expires_at INTEGER,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
-  );
-  `;
-  await run(sql);
-  // Add basic indices if not present
-  await run('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);');
-  await run('CREATE INDEX IF NOT EXISTS idx_users_mobile ON users(mobile);');
-  console.log('Migration complete. DB at:', DB_PATH);
+  const migrationsDir = path.join(__dirname, 'migrations');
+
+  // If migrations directory doesn't exist or is empty, just log and exit gracefully.
+  if (!fs.existsSync(migrationsDir)) {
+    console.log('No migrations directory found. Skipping migrations.');
+    console.log('DB path:', DB_PATH);
+    return;
+  }
+
+  const files = fs
+    .readdirSync(migrationsDir)
+    .filter((f) => f.endsWith('.sql'))
+    .sort(); // run in lexicographic order like 001_x.sql, 002_y.sql
+
+  if (files.length === 0) {
+    console.log('No migration files found. Skipping migrations.');
+    console.log('DB path:', DB_PATH);
+    return;
+  }
+
+  console.log(`Running ${files.length} migration(s) against DB at: ${DB_PATH}`);
+
+  // Execute each SQL file
+  for (const file of files) {
+    const fullPath = path.join(migrationsDir, file);
+    const sql = fs.readFileSync(fullPath, 'utf8');
+    await execMultiStatement(sql);
+    console.log(`Applied migration: ${file}`);
+  }
+
+  console.log('Migrations complete.');
+}
+
+/**
+ * Execute a multi-statement SQL script against sqlite3 using serialize and exec.
+ * sqlite3 Database#exec supports multiple statements.
+ */
+function execMultiStatement(sql) {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.exec(sql, (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  });
 }
 
 migrate().catch((err) => {

@@ -6,8 +6,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
 require('dotenv').config();
 require('./db'); // initialize DB connection
-// Optionally run migration automatically in dev environments
-// const migrate = require('./db/migrate');
+// Run migrations on startup to ensure schema exists (safe to run repeatedly)
+require('./db/migrate');
 
 const app = express();
 
