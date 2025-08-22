@@ -2,6 +2,8 @@
 
 Express-based backend service for the EKYC Suite. It exposes REST APIs for authentication, KYC onboarding, and document uploads, with SQLite for persistence and Swagger docs.
 
+Important: The OpenAPI spec is generated dynamically at runtime from JSDoc comments. Use the live spec at /openapi.json instead of any static files to ensure all routes (including POST /documents) appear correctly.
+
 ## Prerequisites
 - Node.js 18+ and npm
 - (Dev) SQLite is bundled; no external DB setup needed for local use
@@ -56,6 +58,7 @@ npm run dev
 This starts the server with nodemon. By default it listens on:
 - Base URL: http://localhost:3001
 - API Docs (Swagger UI): http://localhost:3001/docs
+- OpenAPI JSON (dynamic): http://localhost:3001/openapi.json
 
 ## Run (Production)
 
@@ -84,7 +87,7 @@ Documents (JWT Bearer required):
 - GET /documents/{id}: Get single document metadata
 - DELETE /documents/{id}: Delete a document and its stored file
 
-See interactive docs at `/docs`. The OpenAPI spec can be retrieved from the running service at `/openapi.json` if exposed.
+See interactive docs at `/docs`. The OpenAPI spec is served dynamically from the running service at `/openapi.json`. This live spec is generated from the latest route JSDoc annotations and should be used by Swagger UI and any client generators. Any static spec files under interfaces/ are for reference only and may be stale.
 
 ## CORS
 
