@@ -2,6 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const routes = require('./routes');
 const authRoutes = require('./routes/auth');
+const kycRoutes = require('./routes/kyc');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
 require('dotenv').config();
@@ -48,6 +49,7 @@ app.use(express.json());
 // Mount routes
 app.use('/', routes);
 app.use('/auth', authRoutes);
+app.use('/kyc', kycRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

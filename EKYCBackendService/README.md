@@ -67,6 +67,13 @@ npm run start
 - POST /auth/request-otp : Request mocked OTP
 - POST /auth/verify-otp : Verify mocked OTP
 
+KYC (JWT Bearer required):
+- GET /kyc/profile, PUT /kyc/profile
+- GET /kyc/identity, PUT /kyc/identity
+- GET /kyc/address, PUT /kyc/address
+- GET /kyc/bank, PUT /kyc/bank
+- GET /kyc/onboarding/status
+
 See interactive docs at `/docs`. The OpenAPI spec can be retrieved from the running service at `/openapi.json` if exposed.
 
 ## CORS
