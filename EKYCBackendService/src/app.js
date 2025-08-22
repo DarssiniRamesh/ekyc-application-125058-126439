@@ -1,14 +1,18 @@
 const cors = require('cors');
 const express = require('express');
 const routes = require('./routes');
+const authRoutes = require('./routes/auth');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
+require('dotenv').config();
+require('./db'); // initialize DB connection
+// Optionally run migration automatically in dev environments
+// const migrate = require('./db/migrate');
 
-// Initialize express app
 const app = express();
 
 app.use(cors({
-  origin: '*',
+  origin: process.env.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -43,13 +47,17 @@ app.use(express.json());
 
 // Mount routes
 app.use('/', routes);
+app.use('/auth', authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    status: 'error',
-    message: 'Internal Server Error',
+  const status = err.status || 500;
+  if (status >= 500) {
+    console.error(err.stack || err);
+  }
+  res.status(status).json({
+    status: status >= 500 ? 'error' : 'fail',
+    message: err.message || 'Internal Server Error',
   });
 });
 
