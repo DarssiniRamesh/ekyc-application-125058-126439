@@ -1,0 +1,83 @@
+# EKYCBackendService
+
+Express-based backend service for the EKYC Suite. It exposes REST APIs for authentication and health checks, with SQLite for persistence and Swagger docs.
+
+## Prerequisites
+- Node.js 18+ and npm
+- (Dev) SQLite is bundled; no external DB setup needed for local use
+
+## Environment Variables
+
+Create a `.env` file in this directory based on `.env.example`.
+
+Required:
+- JWT_SECRET: Secret used to sign JWTs. Use a long random string.
+- SQLITE_DB_PATH: Path to the SQLite database file (e.g., ./data/app.db).
+- PORT: Port for the backend server (e.g., 3001).
+- CORS_ORIGIN: Allowed origin for CORS (e.g., http://localhost:3000).
+
+Optional:
+- HOST: Host to bind the server (default: 0.0.0.0).
+- JWT_EXPIRES_IN: JWT token expiry (default: 1h). Examples: 15m, 1h, 7d.
+
+Example `.env`:
+```
+JWT_SECRET=change_this_to_a_long_random_secret
+JWT_EXPIRES_IN=1h
+SQLITE_DB_PATH=./data/app.db
+HOST=0.0.0.0
+PORT=3001
+CORS_ORIGIN=http://localhost:3000
+```
+
+## Installation
+
+```
+npm install
+```
+
+## Database Migrations
+
+Migrations run automatically on server startup, but you can also run them manually:
+```
+npm run migrate
+```
+
+## Run (Development)
+
+```
+npm run dev
+```
+
+This starts the server with nodemon. By default it listens on:
+- Base URL: http://localhost:3001
+- API Docs (Swagger UI): http://localhost:3001/docs
+
+## Run (Production)
+
+```
+npm run start
+```
+
+## API Overview
+
+- GET / : Health check
+- POST /auth/register : Register with email or mobile + password
+- POST /auth/login : Login with email or mobile + password
+- POST /auth/request-otp : Request mocked OTP
+- POST /auth/verify-otp : Verify mocked OTP
+
+See interactive docs at `/docs`. The OpenAPI spec can be retrieved from the running service at `/openapi.json` if exposed.
+
+## CORS
+
+Set `CORS_ORIGIN` to your frontend origin during development, e.g.:
+```
+CORS_ORIGIN=http://localhost:3000
+```
+Using `*` is acceptable for local development but not recommended for production.
+
+## Notes
+
+- Never commit real secrets to version control.
+- For production, consider moving from SQLite to a managed relational database and secure secret management.
