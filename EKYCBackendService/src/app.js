@@ -6,6 +6,8 @@ const kycRoutes = require('./routes/kyc');
 const documentsRoutes = require('./routes/documents');
 const verificationRoutes = require('./routes/verification');
 const adminRoutes = require('./routes/admin');
+const paymentsRoutes = require('./routes/payments');
+const esignRoutes = require('./routes/esign');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../swagger');
 require('dotenv').config();
@@ -83,6 +85,8 @@ app.use('/kyc', kycRoutes);
 app.use('/documents', documentsRoutes);
 app.use('/verification', verificationRoutes);
 app.use('/admin', adminRoutes);
+app.use('/payments', paymentsRoutes);
+app.use('/esign', esignRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
