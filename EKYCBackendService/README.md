@@ -101,10 +101,30 @@ Endpoints (JWT Bearer using admin token required except login):
 - POST /admin/applications/{id}/approve
 - POST /admin/applications/{id}/reject
 
-On first run, a default admin is seeded if none exists:
-- email: admin@example.com
-- password: admin123
-Change this promptly in production.
+Admin account seeding:
+- Use the seed script to create or update an admin user with secure bcrypt hashing.
+- The script is idempotent and safe to rerun.
+
+Run with interactive prompts:
+```
+node scripts/create-admin.js
+```
+
+Or run non-interactively with environment variables:
+```
+ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=StrongP@ssw0rd node scripts/create-admin.js
+```
+
+Optional:
+- ADMIN_MOBILE can be provided but is not currently stored in the admin_users schema (future compatible).
+- The script will:
+  - Create the admin if it does not exist.
+  - If the admin already exists and ADMIN_PASSWORD is provided, it updates the password hash.
+  - If ADMIN_PASSWORD is omitted for an existing admin, it leaves the password unchanged.
+
+Security notes:
+- Do not use default or weak passwords in production.
+- Ensure ADMIN_JWT_SECRET (or JWT_SECRET) is set for issuing admin tokens.
 
 ## CORS
 
