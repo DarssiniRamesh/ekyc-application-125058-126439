@@ -34,6 +34,9 @@ PORT=3001
 CORS_ORIGIN=http://localhost:3000
 UPLOADS_DIR=./uploads
 UPLOAD_MAX_BYTES=10485760
+# Optional admin tokens
+ADMIN_JWT_SECRET=change_this_for_admin_tokens
+ADMIN_JWT_EXPIRES_IN=2h
 ```
 
 ## Installation
@@ -88,6 +91,20 @@ Documents (JWT Bearer required):
 - DELETE /documents/{id}: Delete a document and its stored file
 
 See interactive docs at `/docs`. The OpenAPI spec is served dynamically from the running service at `/openapi.json`. This live spec is generated from the latest route JSDoc annotations and should be used by Swagger UI and any client generators. Any static spec files under interfaces/ are for reference only and may be stale.
+
+### Admin Module
+
+Endpoints (JWT Bearer using admin token required except login):
+- POST /admin/login
+- GET /admin/applications
+- GET /admin/applications/{id}
+- POST /admin/applications/{id}/approve
+- POST /admin/applications/{id}/reject
+
+On first run, a default admin is seeded if none exists:
+- email: admin@example.com
+- password: admin123
+Change this promptly in production.
 
 ## CORS
 

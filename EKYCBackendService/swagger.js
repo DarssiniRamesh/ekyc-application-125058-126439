@@ -19,7 +19,7 @@ const options = {
       },
     },
   },
-  // Include all route files for docs
+  // Include all route files for docs (admin, auth, kyc, documents, verification, index)
   apis: ['./src/routes/*.js'],
 };
 

@@ -135,6 +135,8 @@ async function updateBank(userId, data) {
  * Compute onboarding status for current user.
  * Simple completion check: section considered complete if a minimal subset is present.
  */
+const adminService = require('./admin');
+
 async function getOnboardingStatus(userId) {
   const [profile, identity, address, bank] = await Promise.all([
     getProfile(userId),
@@ -157,6 +159,16 @@ async function getOnboardingStatus(userId) {
 
   const completionCount = Object.values(completedSections).filter(Boolean).length;
   const totalSections = 4;
+
+  // Ensure an application row exists once user has started onboarding (any section touched)
+  try {
+    if (completionCount > 0) {
+      await adminService.ensureApplicationForUser(userId);
+    }
+  } catch (e) {
+    // Non-fatal, queue creation can also happen when admin views
+    console.warn('ensureApplicationForUser failed:', e.message);
+  }
 
   return {
     sections: completedSections,
